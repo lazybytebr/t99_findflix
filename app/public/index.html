@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuários</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        button.edit { color: #28a745; }
+        button.delete { color: #dc3545; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+        }
+
+        .modal-actions {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Usuários</h1>
+
+        <input type="text" id="search" placeholder="Filtrar por e-mail..." onkeyup="filterTable()">
+
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">E-mail 📧</th>
+                    <th onclick="sortTable(1)">Usuario 🔒</th>
+                    <th>Ações ⚙️</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h2>Editar Usuário</h2>
+            <label for="editEmail">E-mail:</label>
+            <input type="text" id="editEmail"><br>
+            <label for="editUsuario">Usuário:</label>
+            <input type="text" id="editUsuario"><br>
+            <div class="modal-actions">
+                <button onclick="saveEdit()">Salvar</button>
+                <button onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let users = [];  // global para manter dados
+        let currentEditIndex = null;  // índice do usuário que será editado
+
+        async function fetchUsers() {
+            /*fetch('http://127.0.0.1:5000/recuperar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => response.json())
+            .then(data => return data;*/
+
+            return [
+                { email: "joao@example.com", usuario: "joao.silva" },
+                { email: "maria@example.com", usuario: "maria.santos" },
+                { email: "ana@example.com", usuario: "ana.fidelis" },
+            ];
+        }
+
+        function renderTable(data) {
+            users = data;  // guarda os dados
+            const tbody = document.querySelector("#userTable tbody");
+            tbody.innerHTML = "";
+            users.forEach((user, index) => {
+                let row = `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>${user.usuario}</td>
+                        <td>
+                            <button class="edit" onclick="editUser(${index})">✏️</button>
+                            <button class="delete" onclick="deleteUser(${index})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function filterTable() {
+            let input = document.getElementById("search").value.toLowerCase();
+            document.querySelectorAll("#userTable tbody tr").forEach(row => {
+                let email = row.cells[0].textContent.toLowerCase();
+                row.style.display = email.includes(input) ? "" : "none";
+            });
+        }
+
+        function sortTable(colIndex) {
+            const table = document.getElementById("userTable");
+            const rows = Array.from(table.rows).slice(1);
+            rows.sort((a, b) => a.cells[colIndex].innerText.localeCompare(b.cells[colIndex].innerText));
+            table.tBodies[0].append(...rows);
+        }
+
+        // Abrir Modal
+        function editUser(index) {
+            currentEditIndex = index;
+            document.getElementById('editEmail').value = users[index].email;
+            document.getElementById('editUsuario').value = users[index].usuario;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        // Fechar Modal
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Salvar Edição
+        function saveEdit() {
+            const newEmail = document.getElementById('editEmail').value;
+            const newUsuario = document.getElementById('editUsuario').value;
+
+            if (currentEditIndex !== null) {
+                users[currentEditIndex].email = newEmail;
+                users[currentEditIndex].usuario = newUsuario;
+                renderTable(users);
+                closeModal();
+            }
+        }
+
+        // Excluir Usuário
+        function deleteUser(index) {
+            if (confirm("Tem certeza que deseja excluir?")) {
+                users.splice(index, 1);
+                renderTable(users);
+            }
+        }
+
+        // Inicializa
+        fetchUsers().then(renderTable);
+
+
+    </script>
+</body>
+</html>

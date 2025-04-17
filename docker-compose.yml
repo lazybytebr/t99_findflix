@@ -1,0 +1,43 @@
+# Arquivo de config dos containers Docker
+services:
+
+    python:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        container_name: t99_python
+        restart: unless-stopped
+        ports:
+          - "5000:5000" 
+        environment:
+           - MYSQL_HOST=db # usar - xxx = valor ou xxx : valor
+           - MYSQL_USER=root
+           - MYSQL_PASSWORD=root
+           - MYSQL_DATABASE=filmes_t99
+           - FLASK_ENV=development  # Habilita o modo de desenvolvimento
+           - FLASK_APP=app  # Certifica-se de que o Flask saiba onde encontrar a aplicação
+        volumes:
+           - ./:/app
+        depends_on:
+            - db
+
+    db:
+        image: mysql:8 # imagem do docker hub escolhida
+        platform: linux/x86_64 # SO escolhido para o banco
+        restart: unless-stopped # serviço sempre reiniciado
+        container_name: filmes_db # nome do serviço
+        environment:
+            MYSQL_DATABASE: filmes_t99
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_PASSWORD: 1234
+            MYSQL_USER: t99
+        volumes: # pastas espelhadas no container
+            - mysql:/var/lib/mysql
+        ports: # portas de acesso
+            - "3308:3306"
+
+# persistir os dados dentro do container docker
+# docker volumes para manipular
+volumes:
+    mysql:
+        
