@@ -22,8 +22,7 @@
     O Python trabalha com o conceito de PACOTES ( PACKAGES )
 """
 # importando das bibliotecas
-from flask import Flask, redirect, send_from_directory, jsonify
-
+from flask import Flask, redirect, send_from_directory, jsonify, request
 import mysql.connector
 
 app = Flask(__name__) # define como arquivo de início
@@ -54,7 +53,7 @@ def conecta_mysql():
 @app.route( '/registrar/', methods=['POST'] )
 def cadastrar_usuario():
 
-     # retornado da função conecta_mysql()
+    # retornado da função conecta_mysql()
     conexao = conecta_mysql()
 
     # se a conexão não está nula
@@ -63,18 +62,26 @@ def cadastrar_usuario():
         # posiciona o cursor 
         cursor = conexao.cursor()
 
-        sql = 'INSERT INTO usuarios ( email, senha ) VALUES ("admin","1234");' # comando do SQL
+        # receber os dados do formulário usando request
+        form = request.get_json()
+
+        sql = 'INSERT INTO usuarios ( email, senha, usuario ) VALUES ("' + form['email'] + '","' + form['senha'] + '", "' + form['usuario'] + '");' # comando do SQL
 
         cursor.execute(sql) # executa o comando SQL
 
-        #dados = cursor.fetchall()  # retorna todos os dados
-        dados = cursor.fetchone()  # retorna o primeiro
+        #dados = cursor.fetchall()  # retorna todos os dados (select)
+        #dados = cursor.fetchone()  # retorna o primeiro (select)
 
-        return jsonify( dados )
+        return jsonify( '{"mensagem" : "Cadastro Realizado!"}' )
 
     else:
         return jsonify( { "erro":"Problema com os dados!" } ) 
     
+
+def busca_usuarios():
+    conexao = conecta_mysql() # conecta com o BD
+    cursor = conexao.cursor() # cria o cursor para executa
+    sql = "SELECT * FROM usuarios;"
 
 #-------------------------
 # Rota Inicial (Home)

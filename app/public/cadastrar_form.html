@@ -128,7 +128,7 @@
             <button id="botao" type="submit" disabled>Cadastrar</button>
         </form>
         <p>ou</p>
-        <p><a href="login_form.html">Já tem conta? Entre aqui!</a></p>
+        <p><a href="/login">Já tem conta? Entre aqui!</a></p>
     </div>
 
     <script>
@@ -154,12 +154,13 @@
 
         document.getElementById("cadastroForm").addEventListener("submit", function (event) {
             event.preventDefault(); // Evita recarregar a página
-            const dados = {
+            const dados = [{
                 email: document.getElementById("email").value,
-                senha: document.getElementById("senha").value
-            };
+                senha: document.getElementById("senha").value,
+                usuario: document.getElementById("usuario").value
+            }];
 
-            fetch('http://127.0.0.1:5000/registrar', {
+            fetch('http://127.0.0.1:5000/registrar/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
