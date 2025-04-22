@@ -77,11 +77,15 @@ def cadastrar_usuario():
     else:
         return jsonify( { "erro":"Problema com os dados!" } ) 
     
-
+@app.route('/usuarios/')
 def busca_usuarios():
     conexao = conecta_mysql() # conecta com o BD
     cursor = conexao.cursor() # cria o cursor para executa
     sql = "SELECT * FROM usuarios;"
+    cursor.execute( sql ) # executar o sql
+    dados = cursor.fetchall() # mostra todos os dados
+
+    return jsonify( dados ) # retorna os dados usando JSON
 
 #-------------------------
 # Rota Inicial (Home)
