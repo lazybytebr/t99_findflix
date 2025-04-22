@@ -38,17 +38,20 @@ def conecta_mysql():
             host="db",# container ou externo
             port=3306,
             user="root",
-            password="root2",
+            password="root",
             database="filmes_t99"
         )
 
         return conexao # retorna a conexão com BD
 
     except Exception as erro: # se der erro
-        print( '{ "erro":"Problema ao Conectar!" }' )
+        #print( f"{ "erro":"Problema ao Conectar! O erro foi: {erro}" }" )
+        # print("Erro:", erro )
+        #print( '{"erro" : "Problema ao Conectar!"' + erro +' }')
+        print( '{"erro" : "Problema ao Conectar!"}')
         return None
 
-@app.route( '/cadastrar/', methods=['POST'] )
+@app.route( '/registrar/', methods=['POST'] )
 def cadastrar_usuario():
 
      # retornado da função conecta_mysql()
@@ -60,11 +63,12 @@ def cadastrar_usuario():
         # posiciona o cursor 
         cursor = conexao.cursor()
 
-        sql = 'SHOW TABLES;' # comando do SQL
+        sql = 'INSERT INTO usuarios ( email, senha ) VALUES ("admin","1234");' # comando do SQL
 
         cursor.execute(sql) # executa o comando SQL
 
-        dados = cursor.fetchall()  # retorna os dados
+        #dados = cursor.fetchall()  # retorna todos os dados
+        dados = cursor.fetchone()  # retorna o primeiro
 
         return jsonify( dados )
 

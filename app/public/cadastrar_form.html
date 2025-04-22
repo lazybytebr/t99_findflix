@@ -110,13 +110,19 @@
                 <label for="email">E-mail</label>
                 <input type="email" id="email" name="email" required>
             </div>
+
+            <div class="input-group">
+                <label for="usuario">Usuário</label>
+                <input type="text" id="usuario" name="usuario">
+            </div>
+
             <div class="input-group">
                 <label for="senha">Senha</label>
                 <input type="password" id="senha" name="senha" required>
             </div>
             <div class="input-group">
                 <label for="repSenha">Repita a senha</label>
-                <input type="password" id="repSenha" name="repSenha" required onkeydown="validarSenha()">
+                <input type="password" id="repSenha" name="repSenha" required>
                 <span class="error" id="password-error">As senhas não coincidem!</span>
             </div>
             <button id="botao" type="submit" disabled>Cadastrar</button>
@@ -125,42 +131,46 @@
         <p><a href="login_form.html">Já tem conta? Entre aqui!</a></p>
     </div>
 
-<script>
-    // libera o button apenas se os campos estiverem corretamente preenchidos
-    function validarSenha() {
-        const senha = document.getElementById("senha").value;
-        const confirmarSenha = document.getElementById("repSenha").value;
-        const erroSenha = document.getElementById("password-error");
-        const botao = document.getElementById("botao");
+    <script>
+        // libera o button apenas se os campos estiverem corretamente preenchidos
+        document.getElementById("repSenha").addEventListener('input', function () {
+            validarSenha();
+        });
 
-        if (senha == confirmarSenha) {
-            erroSenha.style.display = "block";
-            botao.disabled = false;
-        } else {
-            erroSenha.style.display = "none";
-            botao.disabled = true;
+        function validarSenha() {
+            const senha = document.getElementById("senha").value;
+            const confirmarSenha = document.getElementById("repSenha").value;
+            const erroSenha = document.getElementById("password-error");
+            const botao = document.getElementById("botao");
+
+            if (senha == confirmarSenha) {
+                erroSenha.style.display = "none";
+                botao.disabled = false;
+            } else {
+                erroSenha.style.display = "block";
+                botao.disabled = true;
+            }
         }
-    }
 
-    document.getElementById("cadastroForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Evita recarregar a página
-        const dados = {
-            email: document.getElementById("email").value,
-            senha: document.getElementById("senha").value
-        };
+        document.getElementById("cadastroForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Evita recarregar a página
+            const dados = {
+                email: document.getElementById("email").value,
+                senha: document.getElementById("senha").value
+            };
 
-        fetch('http://127.0.0.1:5000/registrar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dados)
-        })
-        .then(response => response.json())
-        .then(data => alert("Resposta: " + data.mensagem))
-        .catch(error => console.error("Erro:", error));
-    });
-</script>
+            fetch('http://127.0.0.1:5000/registrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            })
+                .then(response => response.json())
+                .then(data => alert("Resposta: " + data.mensagem))
+                .catch(error => console.error("Erro:", error));
+        });
+    </script>
 </body>
 
 </html>
