@@ -154,11 +154,11 @@
 
         document.getElementById("cadastroForm").addEventListener("submit", function (event) {
             event.preventDefault(); // Evita recarregar a página
-            const dados = [{
+            const dados = {
                 email: document.getElementById("email").value,
                 senha: document.getElementById("senha").value,
                 usuario: document.getElementById("usuario").value
-            }];
+            };
 
             fetch('http://127.0.0.1:5000/registrar/', {
                 method: 'POST',

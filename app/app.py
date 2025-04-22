@@ -47,7 +47,7 @@ def conecta_mysql():
         #print( f"{ "erro":"Problema ao Conectar! O erro foi: {erro}" }" )
         # print("Erro:", erro )
         #print( '{"erro" : "Problema ao Conectar!"' + erro +' }')
-        print( '{"erro" : "Problema ao Conectar!"}')
+        print( '{"mensagem" : "Problema ao Conectar!"   }')
         return None
 
 @app.route( '/registrar/', methods=['POST'] )
@@ -56,8 +56,7 @@ def cadastrar_usuario():
     # retornado da função conecta_mysql()
     conexao = conecta_mysql()
 
-    # se a conexão não está nula
-    if conexao != None:
+    if conexao != None: # se não conectar
 
         # posiciona o cursor 
         cursor = conexao.cursor()
@@ -65,23 +64,27 @@ def cadastrar_usuario():
         # receber os dados do formulário usando request
         form = request.get_json()
 
-        sql = 'INSERT INTO usuarios ( email, senha, usuario ) VALUES ("' + form['email'] + '","' + form['senha'] + '", "' + form['usuario'] + '");' # comando do SQL
+        sql = "INSERT INTO usuarios (email, senha, nome_usuario) VALUES ('" + form['email'] + "', '" + form['senha'] + "','" + form['usuario'] + "');"
 
-        cursor.execute(sql) # executa o comando SQL
+        cursor.execute( sql ) # executa o comando SQL
 
-        #dados = cursor.fetchall()  # retorna todos os dados (select)
-        #dados = cursor.fetchone()  # retorna o primeiro (select)
+        conexao.commit() # confirma a execução do comando SQL
 
-        return jsonify( '{"mensagem" : "Cadastro Realizado!"}' )
+        conexao.close() # fecha a conexão
+
+        mensagem = jsonify( {"mensagem": "Cadastro realizado!" } )
 
     else:
-        return jsonify( { "erro":"Problema com os dados!" } ) 
+        mensagem = jsonify( { "erro":"Cadastro não realizado!" } ) 
+
+    return mensagem
+
     
 @app.route('/usuarios/')
 def busca_usuarios():
     conexao = conecta_mysql() # conecta com o BD
     cursor = conexao.cursor() # cria o cursor para executa
-    sql = "SELECT * FROM usuarios;"
+    sql = "SELECT * FROM usuarios ORDER BY id_usuario DESC;"
     cursor.execute( sql ) # executar o sql
     dados = cursor.fetchall() # mostra todos os dados
 
