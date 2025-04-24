@@ -142,21 +142,27 @@
         let currentEditIndex = null;  // índice do usuário que será editado
 
         async function fetchUsers() {
-            /*fetch('http://127.0.0.1:5000/recuperar', {
+
+            fetch('http://127.0.0.1:5000/usuarios/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(dados)
+                body: JSON.stringify(users)
             })
-            .then(response => response.json())
-            .then(data => return data;*/
+                .then(response => response.json())
+                .then(data => {
+                    dados = JSON.stringify(data);// organiza os dados JSON
+                    renderTable(data);// chamada da função que monta a tabela
+                })
 
-            return [
-                { email: "joao@example.com", usuario: "joao.silva" },
-                { email: "maria@example.com", usuario: "maria.santos" },
-                { email: "ana@example.com", usuario: "ana.fidelis" },
-            ];
+
+            /*    return [
+                    { email: "joao@example.com", usuario: "joao.silva" },
+                    { email: "maria@example.com", usuario: "maria.santos" },
+                    { email: "ana@example.com", usuario: "ana.fidelis" },
+                ];
+            */
         }
 
         function renderTable(data) {
@@ -167,7 +173,7 @@
                 let row = `
                     <tr>
                         <td>${user.email}</td>
-                        <td>${user.usuario}</td>
+                        <td>${user.nome_usuario}</td>
                         <td>
                             <button class="edit" onclick="editUser(${index})">✏️</button>
                             <button class="delete" onclick="deleteUser(${index})">🗑️</button>
@@ -197,7 +203,7 @@
         function editUser(index) {
             currentEditIndex = index;
             document.getElementById('editEmail').value = users[index].email;
-            document.getElementById('editUsuario').value = users[index].usuario;
+            document.getElementById('editUsuario').value = users[index].nome_usuario;
             document.getElementById('editModal').style.display = 'flex';
         }
 

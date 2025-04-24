@@ -77,13 +77,18 @@ def cadastrar_usuario():
     else:
         return jsonify( { "erro":"Cadastro não realizado!" } ) 
 
-@app.route('/usuarios/')
+@app.route('/usuarios/', methods=['POST'])
 def busca_usuarios():
     conexao = conecta_mysql() # conecta com o BD
     cursor = conexao.cursor() # cria o cursor para executa
     sql = "SELECT * FROM usuarios;"
     cursor.execute( sql ) # executar o sql
-    dados = cursor.fetchall() # mostra todos os dados
+    #dados = cursor.fetchall() # mostra todos os dados
+
+    # Montando o JSON para o padrão do front end
+    colunas = [desc[0] for desc in cursor.description]
+    # Cria uma lista de dicionários usando os nomes das colunas
+    dados = [dict(zip(colunas, linha)) for linha in cursor.fetchall()]
 
     return jsonify( dados ) # retorna os dados usando JSON
 
