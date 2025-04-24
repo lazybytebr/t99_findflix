@@ -72,12 +72,11 @@ def cadastrar_usuario():
 
         conexao.close() # fecha a conexão
 
-        mensagem = jsonify( {"mensagem": "Cadastro realizado!" } )
+        return jsonify( {"mensagem": "Cadastro realizado!" } )
 
     else:
-        mensagem = jsonify( { "erro":"Cadastro não realizado!" } ) 
+        return jsonify( { "erro":"Cadastro não realizado!" } ) 
 
-    return mensagem
 
     
 @app.route('/usuarios/')
