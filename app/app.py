@@ -64,7 +64,7 @@ def cadastrar_usuario():
         # receber os dados do formulário usando request
         form = request.get_json()
 
-        sql = "INSERT INTO usuarios (email, senha, nome_usuario) VALUES ('" + form['email'] + "', '" + form['senha'] + "','" + form['usuario'] + "');"
+        sql = "INSERT INTO usuarios (email, senha, nome_usuario) VALUES ('" + form['email'] + "',MD5('" + form['senha'] + "'),'" + form['usuario'] + "');"
 
         cursor.execute( sql ) # executa o comando SQL
 
@@ -77,13 +77,11 @@ def cadastrar_usuario():
     else:
         return jsonify( { "erro":"Cadastro não realizado!" } ) 
 
-
-    
 @app.route('/usuarios/')
 def busca_usuarios():
     conexao = conecta_mysql() # conecta com o BD
     cursor = conexao.cursor() # cria o cursor para executa
-    sql = "SELECT * FROM usuarios ORDER BY id_usuario DESC;"
+    sql = "SELECT * FROM usuarios;"
     cursor.execute( sql ) # executar o sql
     dados = cursor.fetchall() # mostra todos os dados
 
