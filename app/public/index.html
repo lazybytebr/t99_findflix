@@ -221,8 +221,26 @@
                 // Pega os valores alterados no modal
                 users[currentEditIndex].email = newEmail;
                 users[currentEditIndex].nome_usuario = newUsuario;
-                // salvar os dados no Banco de Dados
-                
+
+                // montando os dados
+                let dados = {
+                    'newEmail': newEmail,
+                    'newUsuario': newUsuario
+                };
+
+                // salvar os dados no Banco de Dados - enviado para a rota
+                fetch('http://127.0.0.1:5000/atualizar/', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert( JSON.stringify(data) );
+                    })
+
                 // renderiza a tabela com os dados alterados
                 renderTable(users);
                 closeModal();

@@ -96,6 +96,10 @@ def busca_usuarios():
 # Rota Atualizar usuários
 #-------------------------
 @app.route('/atualizar/', methods= ['PUT'])
+def teste():
+    dados = request.get_json()
+    return jsonify( dados )
+
 def atualizar_usuarios():
     # 1. Conectar ao banco
     conexao = conecta_mysql()
@@ -104,7 +108,7 @@ def atualizar_usuarios():
     # 3. receber os dados do formulário html
     dados = request.get_json() # dados['usuario']
     # 4. comando do SQL
-    sql= "UPDATE usuarios SET email='teste26', nome_usuario='teste26' WHERE id_usuario = 3;"
+    sql= "UPDATE filmes_t99.usuarios SET email='" + dados['newEmail'] + "', nome_usuario='"+ dados['newUsuario'] +"' WHERE id_usuario = "+ dados['index'] +";"
     # 5. Rodar o comando SQL (testa)
     cursor.execute(sql)
     # 6. Gravar a alteração no BD
