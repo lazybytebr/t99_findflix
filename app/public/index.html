@@ -218,8 +218,12 @@
             const newUsuario = document.getElementById('editUsuario').value;
 
             if (currentEditIndex !== null) {
+                // Pega os valores alterados no modal
                 users[currentEditIndex].email = newEmail;
-                users[currentEditIndex].usuario = newUsuario;
+                users[currentEditIndex].nome_usuario = newUsuario;
+                // salvar os dados no Banco de Dados
+                
+                // renderiza a tabela com os dados alterados
                 renderTable(users);
                 closeModal();
             }

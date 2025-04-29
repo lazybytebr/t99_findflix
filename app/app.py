@@ -93,6 +93,28 @@ def busca_usuarios():
     return jsonify( dados ) # retorna os dados usando JSON
 
 #-------------------------
+# Rota Atualizar usuários
+#-------------------------
+@app.route('/atualizar/', methods= ['PUT'])
+def atualizar_usuarios():
+    # 1. Conectar ao banco
+    conexao = conecta_mysql()
+    # 2. Cria o objeto cursor
+    cursor = conexao.cursor()
+    # 3. receber os dados do formulário html
+    dados = request.get_json() # dados['usuario']
+    # 4. comando do SQL
+    sql= "UPDATE usuarios SET email='teste26', nome_usuario='teste26' WHERE id_usuario = 3;"
+    # 5. Rodar o comando SQL (testa)
+    cursor.execute(sql)
+    # 6. Gravar a alteração no BD
+    conexao.commit()
+    # 7. fechar a conexao
+    conexao.close()
+    # 8. dar retorno para o usuário
+    return jsonify({'mensagem':'Alterado com sucesso!'})
+
+#-------------------------
 # Rota Inicial (Home)
 #-------------------------
 @app.route('/')
