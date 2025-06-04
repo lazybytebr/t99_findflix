@@ -96,10 +96,6 @@ def busca_usuarios():
 # Rota Atualizar usuários
 #-------------------------
 @app.route('/atualizar/', methods= ['PUT'])
-def teste():
-    dados = request.get_json()
-    return jsonify( dados )
-
 def atualizar_usuarios():
     # 1. Conectar ao banco
     conexao = conecta_mysql()
@@ -117,6 +113,30 @@ def atualizar_usuarios():
     conexao.close()
     # 8. dar retorno para o usuário
     return jsonify({'mensagem':'Alterado com sucesso!'})
+
+#-------------------------
+# Rota Apagar usuários
+#-------------------------
+@app.route('/apagar/', methods=['DELETE'])
+def apagar_usuario():
+    dados = request.get_json()
+
+    if not dados or 'index' not in dados:
+       return jsonify({'mensagem': 'ID não informado'}), 400
+
+    conexao = conecta_mysql()
+
+    cursor = conexao.cursor()
+
+    sql = "DELETE FROM filmes_t99.usuarios WHERE id_usuario = " + str(dados['index']) + ";"
+
+    cursor.execute(sql)
+
+    conexao.commit()
+
+    conexao.close()
+
+    return jsonify({'mensagem': "Usuário excluído com sucesso!"}), 200
 
 #-------------------------
 # Rota Inicial (Home)

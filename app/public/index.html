@@ -114,6 +114,7 @@
         <table id="userTable">
             <thead>
                 <tr>
+                    <th> # ID </th>
                     <th onclick="sortTable(0)">E-mail 📧</th>
                     <th onclick="sortTable(1)">Usuario 🔒</th>
                     <th>Ações ⚙️</th>
@@ -125,7 +126,7 @@
 
     <div class="modal" id="editModal">
         <div class="modal-content">
-            <h2>Editar Usuário</h2>
+            <h2>Editar Usuário - id: <output id="editID"></output> </h2>
             <label for="editEmail">E-mail:</label>
             <input type="text" id="editEmail"><br>
             <label for="editUsuario">Usuário:</label>
@@ -172,11 +173,12 @@
             users.forEach((user, index) => {
                 let row = `
                     <tr>
+                        <td>${user.id_usuario}</td>
                         <td>${user.email}</td>
                         <td>${user.nome_usuario}</td>
                         <td>
                             <button class="edit" onclick="editUser(${index})">✏️</button>
-                            <button class="delete" onclick="deleteUser(${index})">🗑️</button>
+                            <button class="delete" onclick="deleteUser(${user.id_usuario})">🗑️</button>
                         </td>
                     </tr>
                 `;
@@ -204,6 +206,9 @@
             currentEditIndex = index;
             document.getElementById('editEmail').value = users[index].email;
             document.getElementById('editUsuario').value = users[index].nome_usuario;
+
+            document.getElementById('editID').value = users[index].id_usuario;
+
             document.getElementById('editModal').style.display = 'flex';
         }
 
@@ -216,6 +221,7 @@
         function saveEdit() {
             const newEmail = document.getElementById('editEmail').value;
             const newUsuario = document.getElementById('editUsuario').value;
+            const newIndex = document.getElementById('editID').value;
 
             if (currentEditIndex !== null) {
                 // Pega os valores alterados no modal
@@ -225,7 +231,8 @@
                 // montando os dados
                 let dados = {
                     'newEmail': newEmail,
-                    'newUsuario': newUsuario
+                    'newUsuario': newUsuario,
+                    'index': newIndex
                 };
 
                 // salvar os dados no Banco de Dados - enviado para a rota
@@ -238,7 +245,7 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        alert( JSON.stringify(data) );
+                        alert(JSON.stringify(data));
                     })
 
                 // renderiza a tabela com os dados alterados
@@ -251,7 +258,22 @@
         function deleteUser(index) {
             if (confirm("Tem certeza que deseja excluir?")) {
                 users.splice(index, 1);
-                renderTable(users);
+
+                fetch('http://127.0.0.1:5000/apagar/', {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'index': index
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.mensagem)
+                        location.reload(); // recarrega a página para atualizar a tabela
+                    })
+
             }
         }
 
